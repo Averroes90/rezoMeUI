@@ -56,7 +56,10 @@
   
   <style scoped>
   .chat-window {
-    border: 1px solid #ddd;
+    /* Replace #ddd with var(--border-color) and add a dark background */
+    border: 1px solid var(--border-color);
+    background-color: #2d3748;
+    color: var(--text-color);
     padding: 1rem;
     margin-top: 1rem;
     border-radius: 4px;
@@ -69,7 +72,9 @@
     flex: 1;
     overflow-y: auto;
     max-height: 200px;
-    border: 1px solid #eee;
+    /* Replace #eee with var(--border-color), use a slightly darker background for messages */
+    border: 1px solid var(--border-color);
+    background-color: #1f2937;
     padding: 0.5rem;
     border-radius: 4px;
   }
@@ -78,12 +83,14 @@
     margin-bottom: 0.5rem;
   }
   
+  /* Use the accent color for AI messages */
   .message.ai {
-    color: #0066cc;
+    color: var(--accent-color);
   }
   
+  /* Keep user messages a neutral light text; align right for distinction */
   .message.user {
-    color: #333;
+    color: var(--text-color);
     text-align: right;
   }
   
@@ -92,8 +99,18 @@
     gap: 0.5rem;
   }
   
+  /* The input field should blend with the dark theme */
   .chat-input input[type="text"] {
     flex: 1;
     padding: 0.5rem;
+    background-color: #2d3748;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-color);
+  }
+  
+  /* Optional placeholder color if needed */
+  .chat-input input[type="text"]::placeholder {
+    color: #9ca3af; /* a lighter gray for placeholder text */
   }
   </style>

@@ -1,44 +1,49 @@
 <!-- src/components/JobLinkInput.vue -->
 <template>
-    <div class="job-link-input">
-      <label>Job Link:</label>
-      <input v-model="jobLink" type="text" placeholder="Paste job link here..." />
-      <div>
-        <input
-          type="checkbox"
-          id="includeCoverLetter"
-          v-model="includeCoverLetter"
-        />
-        <label for="includeCoverLetter">Include Cover Letter</label>
-      </div>
-      <button @click="handleGenerate">Generate</button>
+  <div class="job-link-input">
+    <label for="jobLink">Job Link:</label>
+    <input
+      id="jobLink"
+      v-model="jobLink"
+      type="text"
+      placeholder="Paste job link here..."
+    />
+
+    <div>
+      <input
+        type="checkbox"
+        id="includeCoverLetter"
+        v-model="includeCoverLetter"
+      />
+      <label for="includeCoverLetter">Include Cover Letter</label>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'JobLinkInput',
-    data() {
-      return {
-        jobLink: '',
-        includeCoverLetter: false,
-      }
-    },
-    methods: {
-      handleGenerate() {
-        // Eventually call your backend with jobLink & includeCoverLetter
-        alert(`Generating with link: ${this.jobLink}\nCover Letter: ${this.includeCoverLetter}`)
-      },
-    },
+
+    <v-btn @click="handleGenerate" variant="tonal">Generate</v-btn>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { generateDocs } from '../api.js';
+
+// We define an emit so this component can send data up to the parent
+const emit = defineEmits(['generated']);
+
+const jobLink = ref('');
+const includeCoverLetter = ref(false);
+
+// On button click, we call our backend and emit the result
+async function handleGenerate() {
+  try {
+    const data = await generateDocs(jobLink.value, includeCoverLetter.value);
+    // data might look like:
+    // { relevantBackground: [...], resumeText: "...", coverLetterText: "..." }
+    emit('generated', data);
+  } catch (error) {
+    console.error('Generation failed:', error);
+    // Optionally show an error message to the user
   }
-  </script>
-  
-  <style scoped>
-  .job-link-input {
-    margin-bottom: 1rem;
-  }
-  input[type="text"] {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-  </style>
+}
+</script>
+
+<style scoped></style>

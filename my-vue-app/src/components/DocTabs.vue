@@ -1,70 +1,48 @@
 <!-- src/components/DocTabs.vue -->
 <template>
-    <div class="doc-tabs">
-      <ul class="tabs">
-        <li
-          v-for="tab in tabs"
-          :key="tab"
-          :class="{ active: tab === activeTab }"
-          @click="activeTab = tab"
-        >
-          {{ tab }}
-        </li>
-      </ul>
+    <v-card>
+      <!-- The Tabs (v-model binds the active tab) -->
+      <v-tabs v-model="activeTab" bg-color="primary">
+        <v-tab value="Resume">Resume</v-tab>
+        <v-tab value="Cover Letter">Cover Letter</v-tab>
+      </v-tabs>
   
-      <div class="tab-content">
-        <!-- Simple logic to display different content based on active tab -->
-        <div v-if="activeTab === 'Resume'">
-          <EditableDoc :docContent="resumeContent" />
-        </div>
-        <div v-else-if="activeTab === 'Cover Letter'">
-          <EditableDoc :docContent="coverLetterContent" />
-        </div>
-      </div>
-    </div>
-  </template>
+      <!-- The Tabs Content -->
+      <v-card-text>
+        <v-tabs-window v-model="activeTab">
+          <v-tabs-window-item value="Resume">
+            <DecoupledEditor v-model="internalResume" />
+          </v-tabs-window-item>
   
-  <script>
-  import EditableDoc from './EditableDoc.vue'
+          <v-tabs-window-item value="Cover Letter">
+            <DecoupledEditor v-model="internalCoverLetter" />
+          </v-tabs-window-item>
+        </v-tabs-window>
+      </v-card-text>
+    </v-card>
+  </template>z
   
-  export default {
-    name: 'DocTabs',
-    components: { EditableDoc },
-    data() {
-      return {
-        tabs: ['Resume', 'Cover Letter'], // Adjust if cover letter is optional
-        activeTab: 'Resume',
-        resumeContent: "Resume content goes here...",
-        coverLetterContent: "Cover letter content goes here...",
-      }
-    },
-  }
+  <script setup>
+  import { ref, watch} from 'vue'
+  import DecoupledEditor from './DecoupledEditor.vue'
+  import { defineProps } from 'vue'
+  
+
+  const props = defineProps({
+  resumeContent: String,
+  coverLetterContent: String
+})
+
+  const emit = defineEmits(['update:resumeContent', 'update:coverLetterContent'])
+  const internalResume = ref(props.resumeContent)
+  const internalCoverLetter = ref(props.coverLetterContent)
+  const tabs = ['Resume', 'Cover Letter']
+  const activeTab = ref('Resume')
+  // Watch for changes in the local refs and emit them upward
+  watch(internalResume, (val) => emit('update:resumeContent', val))
+  watch(internalCoverLetter, (val) => emit('update:coverLetterContent', val))
   </script>
   
   <style scoped>
-  .doc-tabs {
-    border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: 4px;
-  }
-  
-  .tabs {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .tabs li {
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 4px;
-    background-color: #f1f1f1;
-  }
-  
-  .tabs li.active {
-    background-color: #ddd;
-    font-weight: bold;
-  }
+
   </style>
