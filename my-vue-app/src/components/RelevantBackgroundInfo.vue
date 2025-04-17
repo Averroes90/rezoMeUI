@@ -24,9 +24,14 @@ export default {
 <style scoped>
 .relevant-info {
   margin-top: 1rem;
-  /* Replace #ddd border with var(--border-color) */
   border: 1px solid var(--border-color);
+  background-color: #fff; /* White for contrast against var(--bg-color) */
+  color: var(--text-color);
   padding: 0.5rem;
   border-radius: 4px;
+  transition: box-shadow 0.2s ease-in-out;
+}
+.relevant-info:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 </style>

@@ -11,10 +11,11 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-decoupled-document": "^44.3.0",
     "@ckeditor/ckeditor5-vue": "^7.3.0",
     "@mdi/font": "^7.4.47",
     "axios": "^1.8.4",
+    "ckeditor5": "^45.0.0",
+    "ckeditor5-premium-features": "^45.0.0",
     "vue": "^3.5.13",
     "vuetify": "^3.8.1"
   },

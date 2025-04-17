@@ -1,28 +1,33 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp } from 'vue';
+import './style.css';
+import App from './App.vue';
 
 // Vuetify
-import 'vuetify/styles'
-import '@mdi/font/css/materialdesignicons.css'
-import { aliases, mdi } from 'vuetify/iconsets/mdi'
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+import 'vuetify/styles';
+import '@mdi/font/css/materialdesignicons.css';
+import { aliases, mdi } from 'vuetify/iconsets/mdi';
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
 const vuetify = createVuetify({
   theme: {
-    defaultTheme: 'dark',
+    defaultTheme: 'light',
     themes: {
-      dark: {
+      light: {
         colors: {
-          background: '#1f2937',
-          surface: '#2d3748',
-          primary: '#3b82f6',
+          background: '#f9fafb', // Light neutral background
+          surface: '#ffffff', // White for surfaces/cards
+          primary: '#3b82f6', // Accent color
+          secondary: '#6366f1', // Optional secondary accent
+          error: '#ef4444', // Red for errors
+          info: '#3b82f6', // Could match primary or a variant
+          success: '#10b981', // Green
+          warning: '#f59e0b', // Amber
           // etc...
-        }
-      }
-    }
+        },
+      },
+    },
   },
   icons: {
     defaultSet: 'mdi',
@@ -33,5 +38,5 @@ const vuetify = createVuetify({
   },
   components,
   directives,
-})
-createApp(App).use(vuetify).mount('#app')
+});
+createApp(App).use(vuetify).mount('#app');
