@@ -12,10 +12,10 @@
           <div ref="editorElement">
             <ckeditor
               v-if="editor && config"
-              :modelValue="config.placeholder"
               :editor="editor"
               :config="config"
               @ready="onReady"
+              v-model="computedValue"
             />
           </div>
         </div>
@@ -34,7 +34,14 @@
  * https://ckeditor.com/ckeditor-5/builder/?redirect=portal#installation/NoDgNARATAdArDADBSUSMXEcDMcBscALAIx45H6lFwCcOiA7NjiFBYrbYySLYkRQQApgDsUOMMBJgZiWQsQBdSPwCGtfABNaEJUA
  */
 
-import { computed, ref, onMounted, watchEffect, useTemplateRef } from 'vue';
+import {
+  computed,
+  ref,
+  onMounted,
+  watchEffect,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { Ckeditor } from '@ckeditor/ckeditor5-vue';
 
 import {
@@ -591,4 +598,25 @@ function configUpdateAlert(config) {
     );
   }
 }
+////////////////////////my custom code
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: '',
+  },
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+/* 
+  We keep a local copy of the content for convenience, 
+  or we can just rely on the editor's getData().
+*/
+
+const computedValue = computed({
+  get: () => props.modelValue,
+  set: (newVal) => {
+    emit('update:modelValue', newVal);
+  },
+});
 </script>

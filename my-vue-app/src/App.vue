@@ -92,6 +92,7 @@ import JobLinkInput from './components/JobLinkInput.vue';
 import RelevantBackgroundInfo from './components/RelevantBackgroundInfo.vue';
 import DocTabs from './components/DocTabs.vue';
 import ChatWindow from './components/ChatWindow.vue';
+import { generateDocs } from './api.js';
 const drawer = ref(true);
 const isRail = ref(true);
 /* Reactive state to hold backend responses */
@@ -99,24 +100,33 @@ const relevantBackground = ref([]);
 const resumeText = ref('');
 const coverLetterText = ref('');
 
-function handleGenerated(data) {
-  // data => { relevantBackground: [...], resumeText: "...", coverLetterText: "..." }
-  console.log(`data ${data.resumeText}`);
-  if (data.relevantBackground) {
-    relevantBackground.value = data.relevantBackground;
-  }
-  if (data.resumeText) {
-    resumeText.value = data.resumeText;
-  }
-  if (data.coverLetterText) {
-    coverLetterText.value = data.coverLetterText;
+// This function is triggered when the child emits its data
+async function handleGenerated(variables_fp) {
+  try {
+    // Call your generateDocs function with the entire variables_fp object
+    const responseData = await generateDocs(variables_fp);
+
+    // The backend is expected to return something shaped like:
+    // {
+    //   "job_info": {...},
+    //   "background_info": {...},
+    //   "resume": "<html>...</html>",
+    //   "cover_letter": "<html>...</html>"
+    // }
+
+    // Example: store or do something with the result
+    relevantBackground.value = responseData.background_info || null;
+    resumeText.value = responseData.resume || '';
+    coverLetterText.value = responseData.cover_letter || '';
+  } catch (error) {
+    console.error('Error calling generateDocs:', error);
   }
 }
 
-function exportToPDF() {
-  alert('TODO: Implement PDF export!');
-  // We'll handle PDF generation in a future step.
-}
+// function exportToPDF() {
+//   alert('TODO: Implement PDF export!');
+//   // We'll handle PDF generation in a future step.
+// }
 </script>
 
 <style scoped>

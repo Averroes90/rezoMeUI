@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, defineProps, defineEmits } from 'vue';
+import { ref, computed, watch } from 'vue';
 // import DecoupledEditor from './DecoupledEditor.vue';
 import CKEditorPremium from './CKEditorPremium.vue';
 // 1) Define props and emits

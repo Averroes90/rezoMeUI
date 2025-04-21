@@ -28,7 +28,10 @@ export default {
   data() {
     return {
       messages: [
-        { sender: 'ai', text: 'Hello! How can I help?' },
+        {
+          sender: 'ai',
+          text: 'Hello! How can I help? for example you can ask me for things like updating the content or changing the formatting',
+        },
         { sender: 'user', text: 'Please change the resume header font size.' },
       ],
       userMessage: '',
