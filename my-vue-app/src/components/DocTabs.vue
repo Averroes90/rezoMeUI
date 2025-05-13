@@ -14,15 +14,29 @@
 
     <v-card-text class="doc-tabs-content">
       <v-tabs-window v-model="activeTab">
-        <v-tabs-window-item value="Resume">
+        <v-tabs-window-item value="Resume" class="tabs-window-item">
           <div class="editor-area">
-            <CKEditorPremium v-model="internalResume" />
+            <keep-alive>
+              <OnlyOfficeViewer
+                v-show="activeTab === 'Resume'"
+                :doc-id="resumeDocId"
+                :read-only="resumeDocId === 'placeholder'"
+                editor-type="resume"
+              />
+            </keep-alive>
           </div>
         </v-tabs-window-item>
 
-        <v-tabs-window-item value="Cover Letter">
+        <v-tabs-window-item value="Cover Letter" class="tabs-window-item">
           <div class="editor-area">
-            <CKEditorPremium v-model="internalCoverLetter" />
+            <keep-alive>
+              <OnlyOfficeViewer
+                v-show="activeTab === 'Cover Letter'"
+                :doc-id="coverLetterDocId"
+                :read-only="coverLetterDocId === 'placeholder'"
+                editor-type="coverletter"
+              />
+            </keep-alive>
           </div>
         </v-tabs-window-item>
       </v-tabs-window>
@@ -31,34 +45,32 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-// import DecoupledEditor from './DecoupledEditor.vue';
-import CKEditorPremium from './CKEditorPremium.vue';
+import { ref, watch, onMounted, nextTick } from 'vue';
+import OnlyOfficeViewer from './OnlyOfficeViewer.vue';
 // 1) Define props and emits
 const props = defineProps({
-  resumeContent: String,
-  coverLetterContent: String,
-});
-const emit = defineEmits(['update:resumeContent', 'update:coverLetterContent']);
-
-// 2) Create computed properties that emit changes
-const internalResume = computed({
-  get: () => props.resumeContent,
-  set: (val) => emit('update:resumeContent', val),
-});
-
-const internalCoverLetter = computed({
-  get: () => props.coverLetterContent,
-  set: (val) => emit('update:coverLetterContent', val),
-});
-
-// 3) Watch changes in internalResume
-watch(internalResume, (newVal, oldVal) => {
-  console.log('internalResume changed from:', oldVal, 'to:', newVal);
+  resumeDocId: { type: String, default: 'placeholder' },
+  coverLetterDocId: { type: String, default: 'placeholder' },
 });
 
 // 4) Track active tab
 const activeTab = ref('Resume');
+
+// Use nextTick to avoid rendering issues during tab transitions
+watch(
+  activeTab,
+  async (newTab, oldTab) => {
+    if (newTab !== oldTab) {
+      await nextTick();
+      console.log(`Tab changed to: ${newTab}`);
+    }
+  },
+  { flush: 'post' }
+);
+// Make sure components are mounted properly
+onMounted(async () => {
+  await nextTick();
+});
 </script>
 
 <style scoped>
@@ -68,12 +80,13 @@ const activeTab = ref('Resume');
 
 /* Remove or reduce the default Vuetify card styling */
 .doc-tabs-card {
-  /* No background or border if you like a truly minimal layout;
-     else use background-color: #fff; for a plain white card. */
   background-color: transparent !important;
   box-shadow: none !important;
   border: none !important;
   margin: 0; /* Let the parent container handle spacing */
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Take full height of parent container */
 }
 
 /* The v-tabs bar:
@@ -86,25 +99,38 @@ const activeTab = ref('Resume');
 
 /* Controls padding around the tab content */
 .doc-tabs-content {
-  /* If you do NOT want the tab content itself to scroll, leave overflow as visible. 
-     The child (editor) will handle scrolling. */
   overflow: visible;
   background-color: #fff;
   border: 1px solid var(--border-color);
   border-top: none;
   border-radius: 0 0 4px 4px;
-  padding: 0; /* let the .editor-area or CKEditor container handle internal spacing */
+  padding: 0;
+  flex: 1; /* Allow tab content to take remaining space */
+  display: flex;
+  flex-direction: column;
+  min-height: 700px; /* Set a reasonable minimum height */
+}
+/* Make sure tabs window takes full height */
+:deep(.v-window) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+/* Make sure active tab takes full height */
+:deep(.v-window__container) {
+  height: 100%;
 }
 
-/* Constrain the editor width & center it */
-.editor-container {
-  max-width: 800px; /* Adjust to your preference */
-  margin: 0 auto;
-  /* Possibly add some min-height if the editor is too tall or short */
-  /* min-height: 400px; */
+.tabs-window-item {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
+
 .editor-area {
-  width: 100%;
-  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 </style>

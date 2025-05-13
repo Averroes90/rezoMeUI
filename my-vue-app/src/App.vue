@@ -76,8 +76,8 @@
           <!-- RIGHT: DocTabs -->
           <v-col cols="8" class="doc-tabs-col">
             <DocTabs
-              v-model:resume-content="resumeText"
-              v-model:cover-letter-content="coverLetterText"
+              :resume-doc-id="resumeDocId"
+              :cover-letter-doc-id="coverLetterDocId"
             />
           </v-col>
         </v-row>
@@ -97,27 +97,21 @@ const drawer = ref(true);
 const isRail = ref(true);
 /* Reactive state to hold backend responses */
 const relevantBackground = ref([]);
-const resumeText = ref('');
-const coverLetterText = ref('');
+const resumeDocId = ref('placeholder');
+const coverLetterDocId = ref('placeholder');
 
 // This function is triggered when the child emits its data
 async function handleGenerated(variables_fp) {
   try {
-    // Call your generateDocs function with the entire variables_fp object
+    // Clear out previous data before making the API call
+
+    // Now make the API call
     const responseData = await generateDocs(variables_fp);
 
-    // The backend is expected to return something shaped like:
-    // {
-    //   "job_info": {...},
-    //   "background_info": {...},
-    //   "resume": "<html>...</html>",
-    //   "cover_letter": "<html>...</html>"
-    // }
-
-    // Example: store or do something with the result
-    relevantBackground.value = responseData.background_info || null;
-    resumeText.value = responseData.resume || '';
-    coverLetterText.value = responseData.cover_letter || '';
+    // Update local state with the response
+    relevantBackground.value = responseData.background_info || [];
+    resumeDocId.value = responseData.resume.doc_id;
+    coverLetterDocId.value = responseData.cover_letter.doc_id;
   } catch (error) {
     console.error('Error calling generateDocs:', error);
   }
@@ -216,12 +210,7 @@ async function handleGenerated(variables_fp) {
   1. Constrain the width so it doesn’t stretch the entire screen.
   2. Center it or offset it for a balanced look.
 */
-.doc-tabs-wrapper {
-  max-width: 900px; /* Adjust as needed */
-  margin: 0 auto;
-  /* If DocTabs itself has card-like styling or large margins, you can override 
-     in DocTabs.vue or with deep selectors. */
-}
+
 .export-button {
   margin-top: 1rem;
   padding: 0.5rem 1rem;
